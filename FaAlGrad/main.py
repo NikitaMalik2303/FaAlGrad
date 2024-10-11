@@ -90,13 +90,6 @@ def train(model, X_support, X_query, Y_support, Y_query, A_support, A_query, opt
     y_pred_un_zeroes= torch.sum( torch.logical_and(A==0, Y_pred==0)) 
 
     
-    params = OrderedDict(model.named_parameters())
-    logits = model.forward(X, params)
-    logits = logits.squeeze()
-    loss = criterion(logits, Y)
-    
-    Y_pred = (torch.sigmoid(logits) > 0.5 ).float()
-    
     train_accuracy = (Y_pred == Y.view(-1, 1)).sum().item() / len(Y)
     dp_diff = demographic_parity_diff(Y, Y_pred.detach().numpy(), A.detach().numpy())
     dp_ratio = demographic_parity_ratio_(Y, Y_pred.detach().numpy(), A.detach().numpy())
